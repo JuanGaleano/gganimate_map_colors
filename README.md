@@ -2,6 +2,10 @@
 
 This project creates animated visualizations in R using `ggplot2`, `gganimate`, and `sf` libraries. It includes two main parts: a simple bar chart animation and an animated map visualization based on shapefile data. The animations showcase smooth transitions in color to represent changes over states.
 
+![alt text](https://github.com/JuanGaleano/gganimate_map_colors/blob/main/map.gif) 
+
+<img src="https://github.com/JuanGaleano/gganimate_map_colors/blob/main/map.gif" alt="Map Animation" width="500" height="300"/>
+
 ## Code Overview
 
 ### 1. Toy Example: Bar Chart Animation

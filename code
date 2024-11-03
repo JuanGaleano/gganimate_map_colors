@@ -1,0 +1,134 @@
+# Load necessary libraries
+library(colorspace)   # For color palettes
+library(gganimate)    # For creating animations
+library(ggplot2)      # For data visualization
+library(sf)           # For handling spatial data
+
+# Toy example ######
+# Creating a Narrow Visualization with smooth color transitions
+
+# Define a data frame with 40 rows and two columns: 'x' and 'state_cont'
+narrow <- data.frame(
+  x = rep(10, 40),             # Column 'x' with repeated value of 10 for each row
+  state_cont = rep(1:8, each = 5)  # Column 'state_cont' with values 1 to 8, each repeated 5 times
+)
+
+# Define a color palette with custom colors
+colors <- c("#535252", "#a4362b", "#c85842", "#7c524a",
+            "#c29a60", "#d9b573", "#5c848f", "#86a4a8")
+
+# Create a color palette function that interpolates between custom colors
+my_palette <- colorRampPalette(colors)
+
+# Convert 'state_cont' to a numeric variable for continuous transitions
+narrow$state_cont_numeric <- as.numeric(factor(narrow$state_cont))
+
+# Determine the number of unique colors for the palette
+num_colors <- length(unique(narrow$state_cont))
+palette_colors <- my_palette(num_colors)
+
+# Create an animated plot with continuous color transitions
+ggplot(data = narrow, aes(x = x, fill = state_cont_numeric)) +
+  geom_bar() +
+  scale_fill_gradientn(colors = palette_colors) +  # Apply custom color palette
+  transition_time(state_cont_numeric) +            # Set animation to transition over 'state_cont_numeric'
+  ease_aes("linear") +                             # Apply linear transition for smoothness
+  theme_void() +                                   # Remove background grid and axis
+  theme(legend.position = "none")                  # Remove legend
+
+# Spatial Map Creation and Rotation #####
+
+# Set working directory for shapefiles
+setwd("G:\\My Drive\\SHAPEFILES\\bcn_illes_gganimate")
+
+# Load shapefile data for Barcelona as a spatial data frame
+bcn <- read_sf(".", "bcn_fixed_geom_simply")
+
+# Display column names of 'bcn' spatial data
+names(bcn)
+
+# Plot the 'bcn' map with categorical color filling based on 'random' variable
+ggplot(bcn, aes(fill = as.factor(random))) +
+  geom_sf(colour = "black", size = 0.025) +
+  scale_fill_manual(values = colors) +   # Apply defined color palette
+  theme_void() +                         # Remove background grid and axis
+  theme(legend.position = "none")        # Remove legend
+
+# Define rotation angle in radians (44 degrees)
+angle <- 44 * pi / 180
+
+# Create a rotation matrix using the specified angle
+rotation_matrix <- matrix(c(cos(angle), sin(angle), -sin(angle), cos(angle)), ncol = 2)
+
+# Rotate geometry of 'bcn' map using rotation matrix
+bcn_rotated <- bcn %>%
+  mutate(geometry = st_geometry(.) * rotation_matrix)
+
+# Check bounding box of rotated map
+st_bbox(bcn_rotated)
+
+# Plot rotated map with adjusted coordinates
+ggplot(bcn_rotated, aes(fill = as.factor(random))) +
+  geom_sf(colour = "black", linewidth = 0.025) +
+  coord_sf(
+    xlim = c(3484597 + 6200, 3500011 - 4200), 
+    ylim = c(2991232 + 4700, 3007378 - 5000)
+  ) +
+  scale_fill_manual(values = colors) +   # Apply custom colors
+  theme_void() +                         # Remove background
+  theme(legend.position = "none")        # Remove legend
+
+# Save plot as a high-resolution PNG file
+ggsave("1_area.png", scale = 1, height = 6, width = 12, dpi = 300)
+
+# Time-based Transition Animation #####
+
+# Generate frames for animation with different values for 'random'
+bcn1 <- bcn_rotated |> mutate(time = 1) |> relocate(random, .after = time)
+bcn2 <- bcn1 |> select(-time, -random) |> mutate(time = 2, random = ifelse(bcn1$random < 8, bcn1$random + 1, 1))
+bcn3 <- bcn2 |> select(-time, -random) |> mutate(time = 3, random = ifelse(bcn2$random < 8, bcn2$random + 1, 1))
+bcn4 <- bcn3 |> select(-time, -random) |> mutate(time = 4, random = ifelse(bcn3$random < 8, bcn3$random + 1, 1))
+bcn5 <- bcn4 |> select(-time, -random) |> mutate(time = 5, random = ifelse(bcn4$random < 8, bcn4$random + 1, 1))
+bcn6 <- bcn5 |> select(-time, -random) |> mutate(time = 6, random = ifelse(bcn5$random < 8, bcn5$random + 1, 1))
+bcn7 <- bcn6 |> select(-time, -random) |> mutate(time = 7, random = ifelse(bcn6$random < 8, bcn6$random + 1, 1))
+bcn8 <- bcn7 |> select(-time, -random) |> mutate(time = 8, random = ifelse(bcn7$random < 8, bcn7$random + 1, 1))
+
+# Combine all frames into a single data frame for animation
+final <- bind_rows(bcn1, bcn2, bcn3, bcn4, bcn5, bcn6, bcn7, bcn8)
+
+# Convert 'random' to a continuous numeric variable for color mapping
+final$state_cont_numeric <- as.numeric(factor(final$random))
+
+# Define color palette for final animation
+num_colors <- length(unique(final$random))
+palette_colors <- my_palette(num_colors)
+
+# Create animated map with smooth transitions over time
+a <- ggplot(final, aes(fill = state_cont_numeric, group = CODI_ILLA)) +
+  geom_sf(colour = NA, linewidth = 0.025) +
+  coord_sf(
+    xlim = c(3484597 + 6200, 3500011 - 4200),
+    ylim = c(2991232 + 4700, 3007378 - 5000)
+  ) +
+  scale_fill_gradientn(colors = palette_colors) +  # Apply gradient colors
+  transition_time(time) +                          # Animate over time variable
+  ease_aes("linear") +                             # Linear easing for smooth transitions
+  theme_void() +                                   # Remove background and axis
+  theme(
+    legend.position = "none",
+    plot.background = element_rect(fill = "black") # Set background color to black
+  )
+
+# Render and save animation as video file
+animate(
+  a,
+  renderer = av_renderer('1prueba4.mp4'),  # Save as MP4 video file
+  nframes = 450,                           # Set number of frames for animation
+  height = 1520,                           # Height of animation
+  width = 1182,                            # Width of animation
+  res = 150,                               # Resolution
+  end_pause = 0,
+  start_pause = 0,
+  duration = 30,                           # Duration in seconds
+  rewind = TRUE                            # Set to rewind at the end
+) 

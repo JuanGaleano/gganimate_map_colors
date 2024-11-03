@@ -1,12 +1,8 @@
-# Animated Visualizations with ggplot2 and gganimate
+# Animated Visualizations with over sf object using ggplot2 and gganimate
 
-This project creates animated visualizations in R using `ggplot2`, `gganimate`, and `sf` libraries. It includes two main parts: a simple bar chart animation and an animated map visualization based on shapefile data. The animations showcase smooth transitions in color to represent changes over states.
+This project creates animated visualizations in R using `ggplot2`, `gganimate`, and `sf` libraries. It includes two main parts: a simple bar chart animation and an animated map visualization based on shapefile data. The animations showcase smooth transitions in color to represent changes over states. The main goal is to create a a discrete map as the one below, where colors transition sequencially over states- 
 
 ![alt text](https://github.com/JuanGaleano/gganimate_map_colors/blob/main/map.gif) 
-
-
-<img src="https://github.com/JuanGaleano/gganimate_map_colors/blob/main/map.gif" alt="Map Animation" width="500" height="300"/>
-
 
 ## Code Overview
 
@@ -14,6 +10,9 @@ This project creates animated visualizations in R using `ggplot2`, `gganimate`, 
    - **Dataset**: A simple dataset with a constant value `x` and a categorical variable `state_cont` representing different states or categories.
    - **Color Transition**: A custom color palette is created with eight colors, applied in a gradient transition across categories.
    - **Animation**: The bar chart shows smooth transitions in color over "time" frames, with each frame moving to the next category.
+
+<img src="https://github.com/JuanGaleano/gganimate_map_colors/blob/main/toy_example.gif" alt="Toy example" width="300" height="300"/>
+
 
 ### 2. Map Visualization with Shapefiles
    - **Shapefile Data**: Loads spatial data for a geographical area (in this case, Barcelona) as polygons.
@@ -41,8 +40,3 @@ The project is designed to create visually engaging animations that represent te
 
 ## Usage
 To run the code, simply execute the R script. Adjust the parameters in the animation settings (e.g., duration, frame rate) as needed.
-
-
-## FIG 1: Toy example. simple square transitioning over a predifined color palette
-
-![alt text](https://github.com/JuanGaleano/gganimate_map_colors/blob/main/toy_example.gif) 

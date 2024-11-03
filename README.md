@@ -4,8 +4,6 @@ This project creates animated visualizations in R using `ggplot2`, `gganimate`, 
 
 ![alt text](https://github.com/JuanGaleano/gganimate_map_colors/blob/main/map.gif) 
 
-<img src="https://github.com/JuanGaleano/gganimate_map_colors/blob/main/map.gif" alt="Map Animation" width="500" height="300"/>
-
 ## Code Overview
 
 ### 1. Toy Example: Bar Chart Animation

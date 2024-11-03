@@ -1,6 +1,6 @@
 # Animated Visualizations with ggplot2 and gganimate
 
-This project creates animated visualizations in R using `ggplot2`, `gganimate`, and `sf` libraries. It includes two main parts: a simple bar chart animation and an animated map visualization based on shapefile data. The animations showcase smooth transitions in color to represent changes over time.
+This project creates animated visualizations in R using `ggplot2`, `gganimate`, and `sf` libraries. It includes two main parts: a simple bar chart animation and an animated map visualization based on shapefile data. The animations showcase smooth transitions in color to represent changes over states.
 
 ## Code Overview
 
